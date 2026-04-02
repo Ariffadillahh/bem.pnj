@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./components/Navbar";
-import SearchModal from "./components/SearchModal";
-import Footer from "./components/Footer";
+import Navbar from "../Navbar";
+import SearchModal from "../SearchModal";
+import Footer from "../Footer";
 
-const Layouts = ({ children }) => {
+const GuestLayouts = ({ children }) => {
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
@@ -22,11 +22,11 @@ const Layouts = ({ children }) => {
       <Navbar onSearchOpen={() => setSearchOpen(true)} />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
 
-      <main>{children}</main>
+      <main className="">{children}</main>
 
       <Footer />
     </div>
   );
 };
 
-export default Layouts;
+export default GuestLayouts;

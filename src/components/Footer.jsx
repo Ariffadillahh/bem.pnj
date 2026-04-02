@@ -41,19 +41,17 @@ const socials = [
 ];
 
 const quickLinks = [
-  { label: "Events", href: "#events" },
-  { label: "Berita & Orasi", href: "#posts" },
-  { label: "Struktur Organisasi", href: "#struktur" },
   { label: "Tentang BEM PNJ", href: "#about" },
+  { label: "Link Mahasiswa", href: "/student-links" },
+  { label: "Postingan", href: "/posts" },
+  { label: "Struktur Organisasi", href: "/struktur-organisasi" },
 ];
 
 export default function Footer() {
   return (
     <footer style={{ background: "#01002A" }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-12 pb-8">
-        {/* Main grid */}
+      <div className="max-w-7xl mx-auto px-5 md:px-0 pt-12 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-          {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
               <div
@@ -94,7 +92,6 @@ export default function Footer() {
               Mewakili, memperjuangkan, dan menginspirasi seluruh mahasiswa PNJ
               menuju kampus yang demokratis dan berdaya.
             </p>
-            {/* Socials */}
             <div className="flex gap-3">
               {socials.map((s) => (
                 <a
@@ -123,7 +120,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick links */}
           <div>
             <div
               className="text-xs font-bold tracking-widest uppercase mb-5"
@@ -149,7 +145,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <div
               className="text-xs font-bold tracking-widest uppercase mb-5"
@@ -180,13 +175,11 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Divider */}
         <div
           className="h-px mb-6"
           style={{ background: "rgba(255,255,255,0.08)" }}
         />
 
-        {/* Bottom bar */}
         <div
           className="flex flex-wrap items-center justify-between gap-4 text-xs"
           style={{

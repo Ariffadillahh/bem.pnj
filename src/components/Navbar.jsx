@@ -1,6 +1,50 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { NAV_LINKS } from "../data/mockData";
+import { useLocation, useNavigate } from "react-router-dom";
+// Pastikan kamu mengimport icon ini dari react-icons/md
+import {
+  MdOutlineArticle,
+  MdOutlineLink,
+  MdOutlineGroups,
+} from "react-icons/md";
+
+// Data Shortcut untuk Dropdown Docs
+const SHORTCUTS = [
+  {
+    id: "short-1",
+    title: "Postingan",
+    description: "Berita, Event, Prestasi, Orasi dan Info Lomba",
+    type: "Halaman",
+    url: "/posts",
+    icon: <MdOutlineArticle className="text-xl" />,
+    color: "bg-blue-100 text-blue-700",
+  },
+  {
+    id: "short-2",
+    title: "Link Mahasiswa",
+    description: "Portal penting dan E-Learning",
+    type: "Halaman",
+    url: "/student-links",
+    icon: <MdOutlineLink className="text-xl" />,
+    color: "bg-purple-100 text-purple-700",
+  },
+  {
+    id: "short-3",
+    title: "Struktur Organisasi",
+    description: "Susunan kepengurusan dan divisi",
+    type: "Halaman",
+    url: "/struktur-organisasi",
+    icon: <MdOutlineGroups className="text-xl" />,
+    color: "bg-indigo-100 text-indigo-700",
+  },
+];
+
+const NAV_LINKS = [
+  { label: "Events", href: "/#events" },
+  { label: "Berita & Orasi", href: "/#posts" },
+  { label: "Struktur Organisasi", href: "/#struktur" },
+  { label: "Docs", href: "#", hasDropdown: true }, // Menandai bahwa ini punya dropdown
+];
 
 const MenuIcon = () => (
   <svg
@@ -48,10 +92,32 @@ const SearchIcon = () => (
   </svg>
 );
 
+// Icon Panah Kecil untuk Dropdown
+const ChevronDownIcon = ({ isOpen }) => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
+  >
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
 export default function Navbar({ onSearchOpen }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State untuk dropdown desktop
+  const [mobileDocsOpen, setMobileDocsOpen] = useState(false); // State untuk dropdown mobile
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -60,7 +126,14 @@ export default function Navbar({ onSearchOpen }) {
   }, []);
 
   useEffect(() => {
-    const sections = NAV_LINKS.map((l) => l.href.replace("#", ""));
+    if (location.pathname !== "/") {
+      setActiveSection("");
+      return;
+    }
+
+    const sections = NAV_LINKS.filter(
+      (l) => l.href.includes("#") && !l.hasDropdown,
+    ).map((l) => l.href.split("#")[1]);
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -69,12 +142,38 @@ export default function Navbar({ onSearchOpen }) {
       },
       { threshold: 0.3 },
     );
+
     sections.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
+
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    if (href === "#") return; // Abaikan jika link kosong (hanya untuk trigger dropdown mobile)
+
+    setMobileOpen(false);
+    setMobileDocsOpen(false);
+    setDropdownOpen(false);
+
+    if (href.startsWith("/#")) {
+      const targetId = href.split("#")[1];
+      if (location.pathname === "/") {
+        const elem = document.getElementById(targetId);
+        if (elem) {
+          elem.scrollIntoView({ behavior: "smooth" });
+          window.history.pushState(null, "", href);
+        }
+      } else {
+        navigate(href);
+      }
+    } else {
+      navigate(href);
+    }
+  };
 
   return (
     <>
@@ -90,9 +189,12 @@ export default function Navbar({ onSearchOpen }) {
           transition: "background 0.4s, box-shadow 0.4s, border 0.4s",
         }}
       >
-        <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-20">
-          {/* LOGO SECTION */}
-          <a href="#" className="flex items-center gap-3 group shrink-0">
+        <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-20 relative">
+          <a
+            href="/"
+            onClick={(e) => handleNavClick(e, "/")}
+            className="flex items-center gap-3 group shrink-0"
+          >
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-base shrink-0 transition-transform duration-300 group-hover:scale-105"
               style={{
@@ -110,7 +212,6 @@ export default function Navbar({ onSearchOpen }) {
               >
                 BEM PNJ
               </div>
-              {/* Di HP tulisan ini disembunyikan agar layout tidak hancur */}
               <div
                 className="hidden sm:block text-xs sm:text-sm leading-none mt-1"
                 style={{
@@ -123,15 +224,100 @@ export default function Navbar({ onSearchOpen }) {
             </div>
           </a>
 
-          {/* DESKTOP LINKS (Hanya muncul di Layar Laptop/lg) */}
-          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+          {/* DESKTOP NAV LINKS */}
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8 h-full">
             {NAV_LINKS.map((link) => {
-              const isActive = activeSection === link.href.replace("#", "");
+              if (link.hasDropdown) {
+                // RENDER DROPDOWN UNTUK DESKTOP
+                return (
+                  <div
+                    key={link.label}
+                    className="relative h-full flex items-center"
+                    onMouseEnter={() => setDropdownOpen(true)}
+                    onMouseLeave={() => setDropdownOpen(false)}
+                  >
+                    <button
+                      className="flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 cursor-pointer"
+                      style={{
+                        fontFamily: "'Syne', sans-serif",
+                        letterSpacing: "0.03em",
+                        color: dropdownOpen ? "#5399EF" : "#01002A",
+                      }}
+                    >
+                      {link.label}
+                      <ChevronDownIcon isOpen={dropdownOpen} />
+                    </button>
+
+                    <AnimatePresence>
+                      {dropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[360px]"
+                        >
+                          <div
+                            className="bg-white rounded-2xl p-3 shadow-2xl border border-gray-100 relative overflow-hidden"
+                            style={{
+                              boxShadow: "0 20px 40px rgba(1,0,42,0.08)",
+                            }}
+                          >
+                            <div className="flex flex-col gap-1 relative z-10">
+                              {SHORTCUTS.map((item) => (
+                                <a
+                                  key={item.id}
+                                  href={item.url}
+                                  onClick={(e) => handleNavClick(e, item.url)}
+                                  className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors group"
+                                >
+                                  <div
+                                    className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform duration-300`}
+                                  >
+                                    {item.icon}
+                                  </div>
+                                  <div>
+                                    <h4
+                                      className="text-sm font-bold text-[#01002A] mb-0.5"
+                                      style={{
+                                        fontFamily: "'Syne', sans-serif",
+                                      }}
+                                    >
+                                      {item.title}
+                                    </h4>
+                                    <p
+                                      className="text-xs text-slate-500 leading-snug"
+                                      style={{
+                                        fontFamily: "'DM Sans', sans-serif",
+                                      }}
+                                    >
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+
+              // RENDER NORMAL LINK DESKTOP
+              const isHashLink = link.href.startsWith("/#");
+              const targetId = isHashLink ? link.href.split("#")[1] : null;
+              const isActive = isHashLink
+                ? activeSection === targetId && location.pathname === "/"
+                : location.pathname.startsWith(link.href);
+
               return (
                 <a
                   key={link.href}
                   href={link.href}
-                  className="relative text-sm font-semibold transition-colors duration-200"
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className="relative text-sm font-semibold transition-colors duration-200 h-full flex items-center"
                   style={{
                     fontFamily: "'Syne', sans-serif",
                     letterSpacing: "0.03em",
@@ -140,7 +326,7 @@ export default function Navbar({ onSearchOpen }) {
                 >
                   {link.label}
                   <span
-                    className="absolute -bottom-1 left-0 h-0.5 rounded-full transition-all duration-300"
+                    className="absolute bottom-6 left-0 h-0.5 rounded-full transition-all duration-300"
                     style={{
                       width: isActive ? "100%" : "0%",
                       background: "#5399EF",
@@ -151,7 +337,7 @@ export default function Navbar({ onSearchOpen }) {
             })}
           </div>
 
-          {/* ACTION BUTTONS (Search & Menu) */}
+          {/* ACTION BUTTONS */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
               onClick={onSearchOpen}
@@ -165,7 +351,6 @@ export default function Navbar({ onSearchOpen }) {
             >
               <SearchIcon />
               <span className="hidden sm:inline text-xs">Cari</span>
-              {/* Shortcut KBD hanya muncul di layar iPad ke atas */}
               <kbd
                 className="hidden md:inline text-xs px-1.5 py-0.5 rounded-md"
                 style={{
@@ -179,7 +364,6 @@ export default function Navbar({ onSearchOpen }) {
               </kbd>
             </button>
 
-            {/* Hamburger Button (Hanya muncul jika layar di bawah Laptop/lg) */}
             <button
               onClick={() => setMobileOpen((v) => !v)}
               className="lg:hidden p-2 rounded-xl transition-all duration-200 hover:bg-[#5399EF]/10"
@@ -190,7 +374,7 @@ export default function Navbar({ onSearchOpen }) {
           </div>
         </div>
 
-        {/* MOBILE DROPDOWN MENU */}
+        {/* MOBILE NAV LINKS */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
@@ -198,7 +382,7 @@ export default function Navbar({ onSearchOpen }) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-              className="lg:hidden overflow-hidden"
+              className="lg:hidden overflow-hidden max-h-[85vh] overflow-y-auto"
               style={{
                 background: "rgba(255,255,255,0.97)",
                 borderBottom: "1px solid rgba(1,0,42,0.08)",
@@ -206,30 +390,89 @@ export default function Navbar({ onSearchOpen }) {
               }}
             >
               <div className="px-4 py-4 flex flex-col gap-1">
-                {NAV_LINKS.map((link, i) => (
-                  <motion.a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    initial={{ opacity: 0, x: -16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 hover:bg-[#5399EF]/10"
-                    style={{
-                      fontFamily: "'Syne', sans-serif",
-                      color:
-                        activeSection === link.href.replace("#", "")
-                          ? "#5399EF"
-                          : "#01002A",
-                      background:
-                        activeSection === link.href.replace("#", "")
+                {NAV_LINKS.map((link, i) => {
+                  if (link.hasDropdown) {
+                    // RENDER DROPDOWN MOBILE
+                    return (
+                      <div key={link.label} className="flex flex-col">
+                        <button
+                          onClick={() => setMobileDocsOpen(!mobileDocsOpen)}
+                          className="flex items-center justify-between py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 hover:bg-[#5399EF]/10"
+                          style={{
+                            fontFamily: "'Syne', sans-serif",
+                            color: "#01002A",
+                          }}
+                        >
+                          {link.label}
+                          <ChevronDownIcon isOpen={mobileDocsOpen} />
+                        </button>
+                        <AnimatePresence>
+                          {mobileDocsOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden bg-slate-50 rounded-xl mt-1 mx-2"
+                            >
+                              <div className="p-2 flex flex-col gap-1">
+                                {SHORTCUTS.map((item) => (
+                                  <a
+                                    key={item.id}
+                                    href={item.url}
+                                    onClick={(e) => handleNavClick(e, item.url)}
+                                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-white transition-colors"
+                                  >
+                                    <div
+                                      className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm ${item.color}`}
+                                    >
+                                      {item.icon}
+                                    </div>
+                                    <span
+                                      className="text-sm font-bold text-[#01002A]"
+                                      style={{
+                                        fontFamily: "'Syne', sans-serif",
+                                      }}
+                                    >
+                                      {item.title}
+                                    </span>
+                                  </a>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+
+                  // RENDER NORMAL LINK MOBILE
+                  const isHashLink = link.href.startsWith("/#");
+                  const targetId = isHashLink ? link.href.split("#")[1] : null;
+                  const isActive = isHashLink
+                    ? activeSection === targetId && location.pathname === "/"
+                    : location.pathname.startsWith(link.href);
+
+                  return (
+                    <motion.a
+                      key={link.href}
+                      href={link.href}
+                      onClick={(e) => handleNavClick(e, link.href)}
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 hover:bg-[#5399EF]/10"
+                      style={{
+                        fontFamily: "'Syne', sans-serif",
+                        color: isActive ? "#5399EF" : "#01002A",
+                        background: isActive
                           ? "rgba(83,153,239,0.06)"
                           : "transparent",
-                    }}
-                  >
-                    {link.label}
-                  </motion.a>
-                ))}
+                      }}
+                    >
+                      {link.label}
+                    </motion.a>
+                  );
+                })}
               </div>
             </motion.div>
           )}

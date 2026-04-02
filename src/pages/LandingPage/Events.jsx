@@ -1,168 +1,57 @@
 import { motion } from "framer-motion";
-import { EVENTS } from "../../data/mockData";
-
-function EventCard({ event, index }) {
-  const isOngoing = event.status === "ongoing";
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{
-        delay: index * 0.1,
-        duration: 0.55,
-        ease: [0.23, 1, 0.32, 1],
-      }}
-      className="relative flex flex-col rounded-2xl p-6 overflow-hidden group cursor-pointer"
-      style={{
-        background: "#fff",
-        border: "1.5px solid rgba(1,0,42,0.08)",
-        boxShadow: "0 4px 24px rgba(1,0,42,0.05)",
-        transition: "border-color .3s, box-shadow .3s, transform .3s",
-      }}
-      whileHover={{ y: -5, boxShadow: "0 16px 48px rgba(83,153,239,0.14)" }}
-    >
-      {/* Top accent bar */}
-      <div
-        className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
-        style={{
-          background: isOngoing
-            ? "linear-gradient(90deg, #22c55e, #4ade80)"
-            : "linear-gradient(90deg, #5399EF, #7FB3F5)",
-        }}
-      />
-
-      {/* Status badge */}
-      <div className="flex items-center justify-between mb-4">
-        <span
-          className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full"
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            letterSpacing: "0.08em",
-            color: isOngoing ? "#16a34a" : "#5399EF",
-            background: isOngoing
-              ? "rgba(34,197,94,0.08)"
-              : "rgba(83,153,239,0.08)",
-            border: isOngoing
-              ? "1px solid rgba(34,197,94,0.2)"
-              : "1px solid rgba(83,153,239,0.2)",
-          }}
-        >
-          <span
-            className="w-1.5 h-1.5 rounded-full"
-            style={{
-              background: isOngoing ? "#22c55e" : "#5399EF",
-              animation: isOngoing ? "pulse 1.5s infinite" : "none",
-            }}
-          />
-          {isOngoing ? "SEDANG BERJALAN" : "AKAN DATANG"}
-        </span>
-        <span
-          className="text-xs font-medium"
-          style={{
-            color: "rgba(1,0,42,0.4)",
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        >
-          {event.date}
-        </span>
-      </div>
-
-      {/* Category chip */}
-      <div className="mb-3">
-        <span
-          className="text-xs font-bold px-2.5 py-1 rounded-lg"
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            color: "#5399EF",
-            background: "rgba(83,153,239,0.06)",
-            letterSpacing: "0.05em",
-          }}
-        >
-          {event.category}
-        </span>
-      </div>
-
-      {/* Title */}
-      <h3
-        className="text-lg font-black mb-2.5 leading-tight group-hover:text-[#5399EF] transition-colors duration-300"
-        style={{ fontFamily: "'Syne', sans-serif", color: "#01002A" }}
-      >
-        {event.title}
-      </h3>
-
-      {/* Desc */}
-      <p
-        className="text-sm leading-relaxed mb-5 flex-1"
-        style={{
-          color: "rgba(1,0,42,0.55)",
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        {event.desc}
-      </p>
-
-      {/* Dept */}
-      <div
-        className="flex items-center gap-2 text-xs mb-4"
-        style={{
-          color: "rgba(1,0,42,0.4)",
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#5399EF"
-          strokeWidth="2"
-          strokeLinecap="round"
-        >
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-        </svg>
-        {event.dept}
-      </div>
-
-      {/* Progress bar (ongoing only) */}
-      {isOngoing && (
-        <div>
-          <div
-            className="flex justify-between text-xs mb-1.5"
-            style={{
-              color: "rgba(1,0,42,0.4)",
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
-            <span>Progress</span>
-            <span className="font-bold" style={{ color: "#01002A" }}>
-              {event.progress}%
-            </span>
-          </div>
-          <div
-            className="h-1.5 rounded-full overflow-hidden"
-            style={{ background: "rgba(83,153,239,0.12)" }}
-          >
-            <motion.div
-              className="h-full rounded-full"
-              style={{ background: "linear-gradient(90deg, #5399EF, #7FB3F5)" }}
-              initial={{ width: 0 }}
-              whileInView={{ width: `${event.progress}%` }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
-            />
-          </div>
-        </div>
-      )}
-    </motion.article>
-  );
-}
+import { Loader2 } from "lucide-react";
+import { usePosts } from "../../hooks/usePosts";
+import PostCard from "../../components/PostCard";
 
 export default function Events() {
-  const ongoing = EVENTS.filter((e) => e.status === "ongoing");
-  const upcoming = EVENTS.filter((e) => e.status === "upcoming");
+  const {
+    data: responseData,
+    isLoading,
+    isError,
+  } = usePosts({
+    category: "Event",
+    per_page: 5,
+  });
+
+  const rawEvents = responseData?.data || [];
+  const now = new Date();
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+  const mappedEvents = rawEvents
+    .filter((post) => post.status === "Published")
+    .map((post) => {
+      const eventDateObj = post.event_date
+        ? new Date(post.event_date)
+        : new Date();
+
+      const endDate = new Date(eventDateObj.getTime() + 10 * MS_PER_DAY);
+
+      let eventStatus = "Akan Datang";
+
+      if (now >= eventDateObj && now <= endDate) {
+        eventStatus = "Sedang Berjalan";
+      } else if (now > endDate) {
+        eventStatus = "Selesai";
+      }
+
+      return {
+        id: post.id,
+        slug: post.slug,
+        title: post.title,
+        desc: post.short_description || "Tidak ada deskripsi singkat.",
+        date: post.event_date || "Tanggal belum ditentukan",
+        category: post.category,
+        thumbnail: post.thumbnail,
+        author: post.creator_name || "BEM PNJ",
+        status: eventStatus,
+        eventDateObj: eventDateObj,
+      };
+    })
+    .filter((e) => e.status !== "Selesai")
+    .sort((a, b) => a.eventDateObj - b.eventDateObj);
+
+  const ongoing = mappedEvents.filter((e) => e.status === "Sedang Berjalan");
+  const upcoming = mappedEvents.filter((e) => e.status === "Akan Datang");
 
   return (
     <section
@@ -170,7 +59,6 @@ export default function Events() {
       className="py-24 relative"
       style={{ background: "#f7f9fc" }}
     >
-      {/* Top wave separator */}
       <div
         className="absolute top-0 left-0 right-0 overflow-hidden leading-none"
         style={{ height: 60 }}
@@ -184,8 +72,7 @@ export default function Events() {
         </svg>
       </div>
 
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-8">
-        {/* Section header */}
+      <div className="max-w-7xl mx-auto px-5 md:px-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -217,10 +104,24 @@ export default function Events() {
           </p>
         </motion.div>
 
-        {/* Ongoing */}
-        {ongoing.length > 0 && (
-          <div className="mb-10">
-            <div className="flex items-center gap-2 mb-4">
+        {isLoading && (
+          <div className="py-20 flex flex-col items-center justify-center gap-3 text-[#5399EF]">
+            <Loader2 className="animate-spin" size={40} />
+            <p className="font-medium text-slate-500 text-sm">
+              Memuat data event...
+            </p>
+          </div>
+        )}
+
+        {isError && (
+          <div className="py-20 text-center text-red-500 font-medium">
+            Gagal memuat event. Silakan coba beberapa saat lagi.
+          </div>
+        )}
+
+        {!isLoading && !isError && ongoing.length > 0 && (
+          <div className="mb-14">
+            <div className="flex items-center gap-2 mb-6">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <span
                 className="text-xs font-bold tracking-widest uppercase"
@@ -229,18 +130,17 @@ export default function Events() {
                 Sedang Berjalan
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {ongoing.map((e, i) => (
-                <EventCard key={e.id} event={e} index={i} />
+                <PostCard key={e.id} post={e} index={i} />
               ))}
             </div>
           </div>
         )}
 
-        {/* Upcoming */}
-        {upcoming.length > 0 && (
+        {!isLoading && !isError && upcoming.length > 0 && (
           <div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-6">
               <span
                 className="w-2 h-2 rounded-full"
                 style={{ background: "#5399EF" }}
@@ -252,13 +152,22 @@ export default function Events() {
                 Akan Datang
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcoming.map((e, i) => (
-                <EventCard key={e.id} event={e} index={i} />
+                <PostCard key={e.id} post={e} index={i} />
               ))}
             </div>
           </div>
         )}
+
+        {!isLoading &&
+          !isError &&
+          ongoing.length === 0 &&
+          upcoming.length === 0 && (
+            <div className="py-20 text-center text-slate-400 font-medium border-2 border-dashed border-slate-200 rounded-2xl bg-white/50">
+              Belum ada event yang akan datang atau sedang berjalan.
+            </div>
+          )}
       </div>
     </section>
   );

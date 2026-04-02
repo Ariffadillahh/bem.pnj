@@ -45,10 +45,9 @@ const ChevronDown = () => (
 export default function Hero() {
   return (
     <section
-      className="relative min-h-screen flex items-center overflow-hidden pt-16"
+      className="relative min-h-screen flex items-center overflow-hidden mt-5 md:mt-0"
       style={{ background: "#ffffff" }}
     >
-      {/* BG decorations */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <svg
           className="absolute -top-40 -right-40 opacity-[0.055]"
@@ -99,7 +98,7 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-16 py-4">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 md:px-0 md:mt-20 ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
            

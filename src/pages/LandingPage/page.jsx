@@ -1,13 +1,13 @@
 import Hero from "./Hero";
 import Events from "./Events";
-import Posts from "./Post";
+import Posts from "./Posts";
 import OrgStructure from "./Orgstructure";
 import About from "./About";
-import Layouts from "../../Layouts";
+import GuestLayouts from "../../components/layout/GuestLayout";
 
 export default function Page() {
   return (
-    <Layouts>
+    <GuestLayouts>
       <div>
         <Hero />
         <About />
@@ -15,6 +15,6 @@ export default function Page() {
         <Posts />
         <OrgStructure />
       </div>
-    </Layouts>
+    </GuestLayouts>
   );
 }

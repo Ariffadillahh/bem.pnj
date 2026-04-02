@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+@media (min-width: 768px) {
+  .bn-editor {
+    padding-left: 48px !important;
+    padding-right: 48px !important;
+  }
+}
+
+.bn-editor {
+  max-width: 100% !important;
+}
+
+.bn-block-content {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+.bn-editor h1 {
+  font-size: 24pt !important;
+  line-height: 1.3 !important;
+  font-weight: 600 !important;
+  margin-top: 1rem !important;
+}
+
+.bn-editor h2 {
+  font-size: 18pt !important;
+  line-height: 1.3 !important;
+}
+
+.bn-editor h3 {
+  font-size: 14pt !important;
+  line-height: 1.3 !important;
+}
