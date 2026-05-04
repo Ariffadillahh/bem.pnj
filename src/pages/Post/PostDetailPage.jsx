@@ -81,7 +81,8 @@ export default function PostDetailPage() {
                 background: theme.bg,
               }}
             >
-              {theme.icon} {post.category}
+              {theme.icon}{" "}
+              {post.category === "Orasi" ? "Kajian" : post.category}
             </span>
 
             <span className="text-sm text-gray-400 font-medium">
@@ -101,27 +102,6 @@ export default function PostDetailPage() {
           >
             {post.title}
           </h1>
-
-          <div className="flex items-center gap-3 mb-10 pb-10 border-b border-gray-100">
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg"
-              style={{
-                background: theme.color,
-                fontFamily: "'Syne', sans-serif",
-              }}
-            >
-              {(post.creator_name || "A").charAt(0).toUpperCase()}
-            </div>
-
-            <div>
-              <p className="font-bold text-gray-800 text-sm">
-                {post.creator_name || "Admin"}
-              </p>
-              <p className="text-xs text-gray-400">
-                BEM Politeknik Negeri Jakarta
-              </p>
-            </div>
-          </div>
         </motion.div>
 
         {post.thumbnail && (

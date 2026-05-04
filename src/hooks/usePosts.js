@@ -25,10 +25,9 @@ export const usePost = (id) => {
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (formData) => {
-      const response = await api.post("/posts", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    // Tidak perlu lagi FormData, gunakan JSON biasa
+    mutationFn: async (payload) => {
+      const response = await api.post("/posts", payload);
       return response.data;
     },
     onSuccess: async () => {
@@ -40,10 +39,9 @@ export const useCreatePost = () => {
 export const useUpdatePost = (id) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (formData) => {
-      const response = await api.post(`/posts/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    mutationFn: async (payload) => {
+      // Ingat: method PUT untuk update JSON di Laravel
+      const response = await api.put(`/posts/${id}`, payload);
       return response.data;
     },
     onSuccess: async () => {
@@ -76,6 +74,6 @@ export const useGlobalSearch = (query) => {
       return response.data.data;
     },
     enabled: !!query && query.trim().length >= 2,
-    staleTime: 1000 * 60 * 5, 
+    staleTime: 1000 * 60 * 5,
   });
 };

@@ -51,7 +51,7 @@ export default function Posts() {
       await deleteMutation.mutateAsync(itemToDelete.id);
 
       toast.success("Konten berhasil dihapus.");
-      setIsDeleteModalOpen(false); 
+      setIsDeleteModalOpen(false);
       setItemToDelete(null);
     } catch (error) {
       console.error(error);
@@ -184,7 +184,9 @@ export default function Posts() {
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getCategoryBadge(post.category)}`}
                           >
-                            {post.category}
+                            {post.category === "Orasi"
+                              ? "Kajian"
+                              : post.category}
                           </span>
                         </div>
                       </div>

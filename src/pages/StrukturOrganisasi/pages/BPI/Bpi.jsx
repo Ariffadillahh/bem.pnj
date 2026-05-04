@@ -1,0 +1,194 @@
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LuChevronLeft,
+  LuChevronRight,
+  LuClipboardCheck,
+  LuCalendarDays,
+} from "react-icons/lu";
+
+import logoBpi from "../../../../assets/images/kemas/logo-kemas.png";
+import fotoBpi from "../../../../assets/images/kemas/dept-pnk.png";
+
+const Bpi = () => {
+  const bpiData = {
+    id: "bpi",
+    namaBidang: "Badan Pengembangan Internal",
+    tahun: "BEM PNJ 2026",
+    tagline: "Sinergi dalam Pengawasan dan Pengembangan",
+    deskripsiUtama:
+      "Fokus pada penguatan stabilitas internal organisasi melalui pengawasan kinerja dan pengembangan kualitas sumber daya manusia.",
+    logo: logoBpi,
+    fotoKabid: fotoBpi,
+    proker: [
+      {
+        nama: "Info Beasiswa Terpadu",
+        deskripsi:
+          "Penyebaran informasi beasiswa dari pihak kampus maupun swasta secara berkala dan terpusat.",
+        waktu: "Setiap Saat",
+      },
+      {
+        nama: "Cek Kesehatan Gratis",
+        deskripsi:
+          "Bekerja sama dengan Poliklinik PNJ untuk cek tensi, gula darah, dan konsultasi kesehatan dasar.",
+        waktu: "Setiap Semester",
+      },
+    ],
+    agenda: [
+      {
+        nama: "Kawal UKT",
+        deskripsi:
+          "Pendampingan pengajuan penurunan atau pencicilan UKT bagi mahasiswa yang membutuhkan bantuan finansial.",
+      },
+      {
+        nama: "Audit Kinerja Semester",
+        deskripsi:
+          "Melakukan evaluasi menyeluruh terhadap program kerja seluruh fungsionaris BEM PNJ di tengah kepengurusan.",
+      },
+    ],
+  };
+
+  const ContentSlider = ({ items, title, type }) => {
+    const [index, setIndex] = useState(0);
+    const next = () => setIndex((p) => (p === items.length - 1 ? 0 : p + 1));
+    const prev = () => setIndex((p) => (p === 0 ? items.length - 1 : p - 1));
+    const isProker = type === "proker";
+
+    return (
+      <div
+        className={`relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 shadow-xl border ${
+          isProker
+            ? "bg-gradient-to-br from-blue-800 to-blue-950 border-blue-400/20"
+            : "bg-gradient-to-br from-[#01002A] to-slate-900 border-yellow-500/20"
+        }`}
+      >
+        <div className="flex justify-between items-center mb-6 md:mb-8">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className={isProker ? "text-yellow-500" : "text-blue-400"}>
+              {isProker ? (
+                <LuClipboardCheck className="text-xl md:text-2xl" />
+              ) : (
+                <LuCalendarDays className="text-xl md:text-2xl" />
+              )}
+            </div>
+            <h3
+              className={`text-sm md:text-lg font-black uppercase tracking-widest ${isProker ? "text-yellow-500" : "text-blue-400"}`}
+            >
+              {title}
+            </h3>
+          </div>
+          <div className="flex gap-1.5 md:gap-2">
+            <button
+              onClick={prev}
+              className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 hover:bg-yellow-500 text-white hover:text-blue-900 flex items-center justify-center border border-white/10 transition-all"
+            >
+              <LuChevronLeft size={18} />
+            </button>
+            <button
+              onClick={next}
+              className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 hover:bg-yellow-500 text-white hover:text-blue-900 flex items-center justify-center border border-white/10 transition-all"
+            >
+              <LuChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+
+        <div className="min-h-[140px] md:min-h-[160px] flex flex-col justify-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-3 md:space-y-4"
+            >
+              <h4 className="text-xl md:text-3xl font-black text-white leading-tight">
+                {items[index].nama}
+              </h4>
+              <p className="text-blue-100/80 text-sm md:text-lg leading-relaxed">
+                {items[index].deskripsi}
+              </p>
+              {items[index].waktu && (
+                <div className="inline-block px-3 py-1.5 md:px-4 md:py-2 bg-blue-900/40 rounded-lg md:rounded-xl border border-yellow-500/20">
+                  <span className="text-yellow-400 text-[10px] md:text-xs font-bold uppercase tracking-tighter">
+                    ⏱️ Pelaksanaan: {items[index].waktu}
+                  </span>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="flex gap-1.5 md:gap-2 mt-6 md:mt-8">
+          {items.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1 md:h-1.5 rounded-full transition-all duration-300 ${index === i ? "w-6 md:w-8 bg-yellow-500" : "w-1.5 md:w-2 bg-white/10"}`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <section className="py-12 md:py-20 bg-white min-h-screen">
+      <div className="max-w-6xl mx-auto px-5">
+        {/* HEADER SECTION */}
+        <div className="flex flex-col md:flex-row items-center gap-10 mb-16 md:mb-20">
+          {/* TEKS & DESKRIPSI (Order 1 di Mobile, Order 1 di Laptop) */}
+          <div className="flex-1 text-center md:text-left order-1">
+            <img
+              src={bpiData.logo}
+              alt="Logo BPI"
+              className="w-16 md:w-24 mb-4 md:mb-6 mx-auto md:mx-0"
+            />
+            <h1 className="text-3xl md:text-6xl font-black text-[#01002A] font-syne uppercase leading-[1.1] md:leading-[0.9]">
+              Badan Pengembangan <span className="text-blue-500">Internal</span>
+            </h1>
+            <p className="text-yellow-600 font-bold mt-3 md:mt-4 tracking-[0.2em] uppercase text-[10px] md:text-sm">
+              {bpiData.tahun} • #SimpulPerubahan
+            </p>
+
+            <div className="mt-6 md:mt-8 border-l-4 border-yellow-500 pl-4 md:pl-6 py-1 md:py-2 text-left max-w-lg mx-auto md:mx-0">
+              <p className="text-slate-400 italic font-medium text-sm md:text-lg mb-2">
+                "{bpiData.tagline}"
+              </p>
+              <p className="text-slate-700 text-lg md:text-2xl font-bold leading-snug">
+                {bpiData.deskripsiUtama}
+              </p>
+            </div>
+          </div>
+
+          {/* FOTO (Order 2 di Mobile agar di bawah teks, Order 2 di Laptop agar di kanan) */}
+          <div className="w-full max-w-[280px] md:max-w-sm order-2">
+            <div className="aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden border-[6px] md:border-8 border-slate-50 shadow-xl relative group">
+              <img
+                src={bpiData.fotoKabid}
+                alt="Pimpinan BPI"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#01002A]/60 to-transparent" />
+            </div>
+          </div>
+        </div>
+
+        {/* DOUBLE SLIDER ROW */}
+        <div className="grid grid-cols-1 gap-6 md:gap-8">
+          <ContentSlider
+            items={bpiData.proker}
+            title="Program Kerja"
+            type="proker"
+          />
+          <ContentSlider
+            items={bpiData.agenda}
+            title="Daftar Agenda"
+            type="agenda"
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Bpi;

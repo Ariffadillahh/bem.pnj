@@ -96,7 +96,7 @@ export default function PostCard({ post, index }) {
               border: `1px solid ${theme.border}`,
             }}
           >
-            {theme.icon} {post.category}
+            {theme.icon} {post.category === "Orasi" ? "Kajian" : post.category}
           </span>
           <div className="text-right shrink-0">
             <div
@@ -107,16 +107,6 @@ export default function PostCard({ post, index }) {
               }}
             >
               {post.date}
-            </div>
-            <div
-              className="text-[10px] mt-0.5 font-bold"
-              style={{
-                color: "rgba(83,153,239,0.8)",
-                fontFamily: "'DM Sans', sans-serif",
-              }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full inline-block mr-1 bg-[#5399EF]" />
-              {post.status}
             </div>
           </div>
         </div>
@@ -137,30 +127,6 @@ export default function PostCard({ post, index }) {
         >
           {post.desc}
         </p>
-
-        <div
-          className="flex items-center gap-2 pt-3"
-          style={{ borderTop: "1px solid rgba(1,0,42,0.06)" }}
-        >
-          <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black text-white"
-            style={{
-              background: theme.primary,
-              fontFamily: "'Syne', sans-serif",
-            }}
-          >
-            {post.author.charAt(0).toUpperCase()}
-          </div>
-          <span
-            className="text-xs"
-            style={{
-              color: "rgba(1,0,42,0.45)",
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
-            {post.author}
-          </span>
-        </div>
       </div>
     </motion.article>
   );

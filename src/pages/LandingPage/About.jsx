@@ -1,131 +1,210 @@
+import React from "react";
 import { motion } from "framer-motion";
-import { STATS } from "../../data/mockData";
-
-const MISI = [
-  "Mengakselerasi pelayanan advokasi yang responsif dan solutif guna menjamin hak mahasiswa melalui penguatan kanal aspirasi dan pendampingan.",
-  "Mengorkestrasikan kolaborasi harmonis antar elemen IKM PNJ dengan membangun ruang sinergi yang inklusif.",
-  "Memanifestasikan pergerakan yang progresif, berbasis kajian dan inovasi sebagai garda terdepan dalam mengawal isu-isu strategis tingkat kampus maupun nasional.",
-  "Meningkatkan kualitas internal BEM PNJ berlandaskan asas profesionalitas dan kekeluargaan.",
-];
+import { LuBuilding2, LuPlay, LuFlower2, LuArrowRight } from "react-icons/lu"; // Gunakan react-icons
+import logo from "../../assets/images/logo.png";
 
 export default function About() {
+  const fadeUpVariant = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 },
+    },
+  };
+
   return (
-    <section
-      id="about"
-      className="py-24 relative"
-      style={{ background: "#ffffff" }}
-    >
-      <div className="max-w-7xl mx-auto px-5 md:px-0">
-        <div>
-          {/* --- VISI SECTION --- */}
+    <section className="py-16 md:py-24 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-5 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-24 md:mb-32">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-16"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square bg-[#FCFBF4] rounded-[2rem] border border-orange-50 flex flex-col lg:items-center lg:justify-center p-8 md:p-12 shadow-sm"
           >
-            <div className="text-center mb-8">
-              <div
-                className="text-xs font-bold tracking-[0.18em] uppercase mb-2"
-                style={{ fontFamily: "'Syne', sans-serif", color: "#5399EF" }}
-              >
-                Tujuan Kami
-              </div>
-              <h3
-                className="text-3xl sm:text-4xl font-black"
-                style={{ fontFamily: "'Syne', sans-serif", color: "#01002A" }}
-              >
-                Visi Kabinet{" "}
-                <span style={{ color: "#5399EF" }}>Simpul Perubahan</span>
-              </h3>
+            <div className="flex-1 flex items-center justify-center">
+              <img
+                src={logo}
+                alt="Logo BEM PNJ"
+                className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              />
             </div>
 
             <div
-              className="max-w-4xl mx-auto text-center p-8 sm:p-12 rounded-3xl relative overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, #01002A, #0a1128)",
-                boxShadow: "0 20px 40px rgba(1,0,42,0.15)",
-              }}
+              className="relative mt-8 flex items-start gap-4 p-0 bg-transparent border-none shadow-none 
+              lg:absolute lg:mt-0 lg:bottom-8 lg:left-8 lg:right-8 lg:bg-white/95 lg:backdrop-blur-md lg:p-5 lg:rounded-2xl lg:shadow-[0_20px_40px_rgba(0,0,0,0.06)] lg:border lg:border-slate-100"
             >
-              <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-[#5399EF] rounded-full blur-3xl opacity-20" />
-              <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-[#5399EF] rounded-full blur-3xl opacity-20" />
-
-              <p
-                className="text-xl sm:text-2xl md:text-3xl font-bold leading-relaxed text-white relative z-10"
-                style={{ fontFamily: "'Syne', sans-serif" }}
-              >
-                "Terwujudnya BEM PNJ yang{" "}
-                <span className="text-[#5399EF]">aspiratif</span>,{" "}
-                <span className="text-[#5399EF]">kolaboratif</span>, dan{" "}
-                <span className="text-[#5399EF]">progresif</span> sebagai pionir
-                kebaikan bagi IKM PNJ dan Indonesia."
-              </p>
+              <div className="bg-blue-50 p-2.5 rounded-xl text-blue-500 shrink-0">
+                <LuBuilding2 size={22} />
+              </div>
+              <div>
+                <h4
+                  className="font-bold text-[#01002A] text-sm sm:text-base leading-tight"
+                  style={{ fontFamily: "'Syne', sans-serif" }}
+                >
+                  Badan Eksekutif Mahasiswa IKM PNJ
+                </h4>
+                <p
+                  className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed"
+                  style={{ fontFamily: "'DM Sans', sans-serif" }}
+                >
+                  Organisasi kemahasiswaan eksekutif tertinggi di PNJ
+                </p>
+              </div>
             </div>
           </motion.div>
 
-          {/* --- MISI SECTION --- */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="flex flex-col mt-12 lg:mt-0"
           >
-            <h3
-              className="text-3xl sm:text-4xl font-black"
-              style={{ fontFamily: "'Syne', sans-serif", color: "#01002A" }}
+            <motion.div
+              variants={fadeUpVariant}
+              className="flex items-center gap-3 mb-4"
             >
-              Misi Kabinet{" "}
-              <span style={{ color: "#5399EF" }}>Simpul Perubahan</span>
-            </h3>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {MISI.map((misi, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.45 }}
-                className="relative p-8 rounded-3xl group overflow-hidden flex items-start gap-6"
-                style={{
-                  background: "#fff",
-                  border: "1.5px solid rgba(83,153,239,0.15)",
-                  boxShadow: "0 8px 24px rgba(1,0,42,0.04)",
-                  transition: "all .3s",
-                }}
-                whileHover={{
-                  y: -4,
-                  borderColor: "rgba(83,153,239,0.4)",
-                  boxShadow: "0 16px 40px rgba(83,153,239,0.12)",
-                }}
+              <span
+                className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase bg-blue-50 px-3 py-1 rounded-full"
+                style={{ fontFamily: "'Syne', sans-serif" }}
               >
-                <div
-                  className="shrink-0 text-5xl sm:text-6xl font-black transition-colors duration-300"
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    color: "#01002A",
-                    WebkitTextStroke: "1px #5399EF",
-                    textShadow: "0px 4px 12px rgba(83,153,239,0.2)",
-                  }}
-                >
-                  {index + 1}
-                </div>
+                Mengenal BEM PNJ
+              </span>
+            </motion.div>
 
-                <p
-                  className="text-[15px] sm:text-base leading-relaxed pt-2"
-                  style={{
-                    color: "rgba(1,0,42,0.7)",
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
+            <motion.h2
+              variants={fadeUpVariant}
+              className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#01002A] mb-6 leading-[1.1]"
+              style={{ fontFamily: "'Syne', sans-serif" }}
+            >
+              Apa itu BEM PNJ?
+            </motion.h2>
+
+            <motion.div
+              variants={fadeUpVariant}
+              className="space-y-4 mb-10 text-slate-600 text-sm sm:text-base leading-relaxed"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+            >
+              <p>
+                Badan Eksekutif Mahasiswa (BEM) Politeknik Negeri Jakarta adalah
+                lembaga eksekutif tertinggi dalam struktur organisasi IKM PNJ
+                yang berperan sebagai representasi utama mahasiswa.
+              </p>
+              <p>
+                Kami bergerak aktif dalam bidang advokasi, pengembangan minat
+                bakat, serta pengabdian masyarakat guna menciptakan perubahan
+                nyata.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUpVariant}
+              className="grid grid-cols-3 gap-3 sm:gap-4 mb-8"
+            >
+              {[
+                { num: "4", label: "Bidang" },
+                { num: "8", label: "Departemen" },
+                { num: "90+", label: "Anggota" },
+              ].map((stat, i) => (
+                <div
+                  key={i}
+                  className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-blue-200 transition-all"
                 >
-                  {misi}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+                  <span
+                    className="text-2xl sm:text-3xl font-bold text-[#5399EF]"
+                    style={{ fontFamily: "'Syne', sans-serif" }}
+                  >
+                    {stat.num}
+                  </span>
+                  <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-tighter mt-1">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+
+            <motion.a
+              variants={fadeUpVariant}
+              href="#kabinet"
+              className="group flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-blue-500 hover:border-blue-500 transition-all duration-300"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0 text-orange-500 group-hover:text-blue-500 transition-colors">
+                  <LuFlower2 size={20} />
+                </div>
+                <div>
+                  <h4
+                    className="font-bold text-[#01002A] group-hover:text-white text-sm sm:text-base transition-colors"
+                    style={{ fontFamily: "'Syne', sans-serif" }}
+                  >
+                    Kabinet Simpul Perubahan
+                  </h4>
+                  <p className="text-[11px] sm:text-xs text-slate-500 group-hover:text-blue-100 font-medium">
+                    Pelajari visi & misi kabinet kami
+                  </p>
+                </div>
+              </div>
+              <LuArrowRight className="text-blue-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
+            </motion.a>
+          </motion.div>
         </div>
+
+        {/* =========================================
+    SECTION VIDEO (YouTube Iframe)
+    ========================================= */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col items-center"
+        >
+          {/* Header Video Section */}
+          <div className="text-center mb-10">
+            <h2
+              className="text-3xl md:text-4xl font-black text-[#01002A] mb-4"
+              style={{ fontFamily: "'Syne', sans-serif" }}
+            >
+              Video Profil Kami
+            </h2>
+            <div className="h-1.5 w-20 bg-blue-500 mx-auto rounded-full"></div>
+            <p
+              className="text-slate-600 mt-6 max-w-2xl mx-auto text-sm sm:text-base"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+            >
+              Saksikan perjalanan, visi, dan semangat kolaborasi Badan Eksekutif
+              Mahasiswa Politeknik Negeri Jakarta dalam satu frame.
+            </p>
+          </div>
+
+          {/* Video Container (Responsive Aspect Ratio 16:9) */}
+          <div className="w-full max-w-5xl relative rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(1,0,42,0.15)] bg-black border-[4px] md:border-[8px] border-white">
+            <div className="relative w-full pt-[56.25%]">
+              {" "}
+              {/* Rahasia agar iframe responsif 16:9 */}
+              <iframe
+                className="absolute top-0 left-0 w-full h-full"
+                src="https://www.youtube.com/embed/jl2W9Sh4qjc?si=E3tBOfSXfCNbItOa"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

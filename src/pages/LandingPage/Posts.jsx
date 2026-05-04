@@ -1,20 +1,11 @@
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { usePosts } from "../../hooks/usePosts";
 import PostCard from "../../components/PostCard";
 
-const FILTERS = [
-  { val: "all", label: "Semua" },
-  { val: "News", label: "News" },
-  { val: "Orasi", label: "Orasi" },
-  { val: "Prestasi", label: "Prestasi" },
-];
-
 export default function Posts() {
   const navigate = useNavigate();
-  const [active, setActive] = useState("all");
 
   const {
     data: responseData,
@@ -26,23 +17,11 @@ export default function Posts() {
 
   const rawPosts = responseData?.data || [];
 
-  // Filter 3 Kategori
-  const validPosts = rawPosts.filter(
-    (post) =>
-      (post.category === "News" ||
-        post.category === "Orasi" ||
-        post.category === "Prestasi") &&
-      post.status === "Published",
-  );
+  // Langsung filter yang berstatus Published dan ambil 5 data pertama
+  const finalPosts = rawPosts
+    .filter((post) => post.status === "Published")
+    .slice(0, 5);
 
-  const tabFiltered =
-    active === "all"
-      ? validPosts
-      : validPosts.filter((p) => p.category === active);
-
-  const finalPosts = tabFiltered.slice(0, 5);
-
- 
   const formatDate = (dateStr) => {
     if (!dateStr) return "TBA";
     const d = new Date(dateStr);
@@ -59,7 +38,7 @@ export default function Posts() {
       className="py-24 relative"
       style={{ background: "#ffffff" }}
     >
-      <div className="max-w-7xl mx-auto px-5 md:px-0">
+      <div className="max-w-7xl mx-auto px-5 ">
         <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -76,37 +55,9 @@ export default function Posts() {
               className="text-4xl sm:text-5xl font-black max-w-xl"
               style={{ fontFamily: "'Syne', sans-serif", color: "#01002A" }}
             >
-              Berita, Orasi &amp;{" "}
-              <span style={{ color: "#5399EF" }}>Prestasi</span>
+              Informasi <span style={{ color: "#5399EF" }}>Terbaru</span>
             </h2>
           </motion.div>
-
-          <div className="flex gap-2 flex-wrap">
-            {FILTERS.map((f) => {
-              const isActive = active === f.val;
-              return (
-                <button
-                  key={f.val}
-                  onClick={() => setActive(f.val)}
-                  className="px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95"
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    letterSpacing: "0.05em",
-                    color: isActive ? "#ffffff" : "#5399EF",
-                    background: isActive ? "#5399EF" : "rgba(83,153,239,0.08)",
-                    border: isActive
-                      ? "none"
-                      : "1.5px solid rgba(83,153,239,0.25)",
-                    boxShadow: isActive
-                      ? "0 4px 16px rgba(83,153,239,0.35)"
-                      : "none",
-                  }}
-                >
-                  {f.label}
-                </button>
-              );
-            })}
-          </div>
         </div>
 
         {isLoading && (
@@ -152,7 +103,7 @@ export default function Posts() {
 
         {!isLoading && !isError && finalPosts.length === 0 && (
           <div className="py-20 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl">
-            Belum ada publikasi pada kategori ini.
+            Belum ada publikasi terbaru saat ini.
           </div>
         )}
 

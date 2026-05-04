@@ -4,20 +4,11 @@ import { usePosts } from "../../hooks/usePosts";
 import PostCard from "../../components/PostCard";
 import { Search, X, FileText } from "lucide-react";
 
-// PRESTASI DIHAPUS DARI SINI
-const CATEGORIES = [
-  { value: "All", label: "Semua", icon: "✦" },
-  { value: "News", label: "News", icon: "📰" },
-  { value: "Orasi", label: "Kajian", icon: "📢" },
-  { value: "Events", label: "Event", icon: "🗓" },
-];
-
 const PER_PAGE_OPTIONS = [10, 20, 50];
 
-function PostPage() {
+function PrestasiPage() {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [category, setCategory] = useState("All");
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
 
@@ -29,11 +20,12 @@ function PostPage() {
     return () => clearTimeout(t);
   }, [searchInput]);
 
+  // HARCODED: Parameter kategori diset "Prestasi" secara permanen
   const queryParams = {
     page,
     per_page: perPage,
+    category: "Prestasi",
     ...(debouncedSearch && { search: debouncedSearch }),
-    ...(category !== "All" && { category }),
   };
 
   const { data, isLoading, isError } = usePosts(queryParams);
@@ -68,45 +60,25 @@ function PostPage() {
       <div className="min-h-screen bg-white">
         <div className="pt-28 pb-6" style={{ background: "#ffffff" }}>
           <div className="max-w-7xl mx-auto px-5 md:px-0">
-            {/* BAGIAN ATAS: FILTER & SEARCH */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              {/* Filter Kategori */}
-              <div
-                className="flex flex-wrap gap-2 items-center p-2 rounded-2xl w-full md:w-auto"
-                style={{
-                  background: "#f7f9fc",
-                  border: "1.5px solid rgba(1,0,42,0.07)",
-                }}
-              >
-                {CATEGORIES.map(({ value, label, icon }) => {
-                  const active = category === value;
-                  return (
-                    <button
-                      key={value}
-                      onClick={() => {
-                        setCategory(value);
-                        setPage(1);
-                      }}
-                      className="inline-flex flex-1 md:flex-none justify-center items-center gap-1.5 px-3.5 py-2 md:py-1.5 rounded-xl md:rounded-full text-xs font-bold transition-all duration-200"
-                      style={{
-                        fontFamily: "'Syne',sans-serif",
-                        color: active ? "#fff" : "rgba(1,0,42,0.55)",
-                        background: active ? "#01002A" : "transparent",
-                        border: active ? "none" : "1.5px solid transparent",
-                        boxShadow: active
-                          ? "0 3px 12px rgba(1,0,42,0.18)"
-                          : "none",
-                      }}
-                    >
-                      <span className="text-sm hidden sm:inline">{icon}</span>{" "}
-                      {label}
-                    </button>
-                  );
-                })}
+            {/* Judul & Search Box */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <h1
+                  className="text-4xl md:text-5xl font-black text-[#01002A]"
+                  style={{ fontFamily: "'Syne', sans-serif" }}
+                >
+                  Prestasi <span style={{ color: "#5399EF" }}>Mahasiswa</span>
+                </h1>
+                <p
+                  className="text-sm mt-2 text-slate-500"
+                  style={{ fontFamily: "'DM Sans', sans-serif" }}
+                >
+                  Jejak langkah membanggakan dari mahasiswa PNJ.
+                </p>
               </div>
 
               {/* Kotak Pencarian */}
-              <div className="w-full md:w-[320px] relative">
+              <div className="w-full md:w-[320px] relative shrink-0">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <Search size={16} className="text-slate-400" />
                 </div>
@@ -114,12 +86,20 @@ function PostPage() {
                   type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Cari postingan..."
-                  className="w-full pl-10 pr-10 py-3 md:py-2.5 rounded-2xl md:rounded-xl text-sm outline-none border transition-all bg-[#f7f9fc] focus:bg-white focus:border-[#5399EF] focus:ring-4 focus:ring-blue-500/10"
+                  placeholder="Cari prestasi..."
+                  className="w-full pl-10 pr-10 py-3 md:py-2.5 rounded-2xl md:rounded-xl text-sm outline-none border transition-all bg-[#f7f9fc] focus:bg-white focus:ring-4"
                   style={{
                     fontFamily: "'DM Sans', sans-serif",
                     color: "#01002A",
                     borderColor: "rgba(1,0,42,0.07)",
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = "#5399EF";
+                    e.target.style.boxShadow = "0 0 0 4px rgba(83,153,239,0.1)";
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = "rgba(1,0,42,0.07)";
+                    e.target.style.boxShadow = "none";
                   }}
                 />
                 {searchInput && (
@@ -139,7 +119,7 @@ function PostPage() {
                 style={{ fontFamily: "'DM Sans', sans-serif" }}
               >
                 Menampilkan hasil untuk{" "}
-                <span className="font-semibold text-[#5399EF]">
+                <span className="font-semibold" style={{ color: "#5399EF" }}>
                   "{debouncedSearch}"
                 </span>
               </p>
@@ -152,7 +132,7 @@ function PostPage() {
             className="h-px mt-2"
             style={{
               background:
-                "linear-gradient(90deg,rgba(83,153,239,0.3),rgba(1,0,42,0.05))",
+                "linear-gradient(90deg, rgba(83,153,239,0.3) 0%, transparent 100%)",
             }}
           />
         </div>
@@ -178,13 +158,10 @@ function PostPage() {
                 </svg>
               </div>
               <p
-                className="text-sm"
-                style={{
-                  fontFamily: "'DM Sans',sans-serif",
-                  color: "rgba(1,0,42,0.4)",
-                }}
+                className="text-sm text-slate-500"
+                style={{ fontFamily: "'DM Sans',sans-serif" }}
               >
-                Memuat postingan...
+                Memuat prestasi...
               </p>
             </div>
           )}
@@ -195,7 +172,7 @@ function PostPage() {
                 className="text-sm font-semibold text-red-500"
                 style={{ fontFamily: "'DM Sans',sans-serif" }}
               >
-                Gagal memuat postingan. Silakan coba lagi.
+                Gagal memuat prestasi. Silakan coba lagi.
               </p>
             </div>
           )}
@@ -236,29 +213,23 @@ function PostPage() {
                     <FileText size={24} style={{ color: "#5399EF" }} />
                   </div>
                   <p
-                    className="text-sm font-bold"
-                    style={{
-                      fontFamily: "'Syne',sans-serif",
-                      color: "rgba(1,0,42,0.5)",
-                    }}
+                    className="text-sm font-bold text-slate-600"
+                    style={{ fontFamily: "'Syne',sans-serif" }}
                   >
                     {debouncedSearch
-                      ? `Tidak ada postingan cocok dengan "${debouncedSearch}"`
-                      : "Belum ada postingan yang ditemukan."}
+                      ? `Tidak ada prestasi cocok dengan "${debouncedSearch}"`
+                      : "Belum ada data prestasi."}
                   </p>
-                  {(debouncedSearch || category !== "All") && (
+                  {debouncedSearch && (
                     <button
-                      onClick={() => {
-                        setSearchInput("");
-                        setCategory("All");
-                      }}
+                      onClick={() => setSearchInput("")}
                       className="text-xs font-bold hover:underline mt-1"
                       style={{
-                        color: "#5399EF",
                         fontFamily: "'Syne',sans-serif",
+                        color: "#5399EF",
                       }}
                     >
-                      Reset filter
+                      Reset pencarian
                     </button>
                   )}
                 </div>
@@ -293,15 +264,12 @@ function PostPage() {
                 </select>
 
                 <span
-                  className="text-sm hidden sm:block"
-                  style={{
-                    fontFamily: "'DM Sans',sans-serif",
-                    color: "rgba(1,0,42,0.4)",
-                  }}
+                  className="text-sm hidden sm:block text-slate-500"
+                  style={{ fontFamily: "'DM Sans',sans-serif" }}
                 >
                   Menampilkan{" "}
                   <strong style={{ color: "#01002A" }}>{posts.length}</strong>{" "}
-                  postingan
+                  prestasi
                 </span>
               </div>
 
@@ -325,8 +293,7 @@ function PostPage() {
                       p === "…" ? (
                         <span
                           key={`dot-${i}`}
-                          className="px-2 text-sm"
-                          style={{ color: "rgba(1,0,42,0.3)" }}
+                          className="px-2 text-sm text-slate-400"
                         >
                           …
                         </span>
@@ -343,6 +310,10 @@ function PostPage() {
                               p === page
                                 ? "none"
                                 : "1px solid rgba(1,0,42,0.05)",
+                            boxShadow:
+                              p === page
+                                ? "0 4px 14px rgba(83,153,239,0.35)"
+                                : "none",
                           }}
                         >
                           {p}
@@ -376,4 +347,4 @@ function PostPage() {
   );
 }
 
-export default PostPage;
+export default PrestasiPage;

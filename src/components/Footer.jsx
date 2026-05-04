@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import logo from "../assets/images/logo.png"
 
 const socials = [
   {
@@ -56,13 +57,8 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-5">
               <div
                 className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-black text-base shrink-0"
-                style={{
-                  background: "linear-gradient(135deg, #5399EF, #2255cc)",
-                  fontFamily: "'Syne', sans-serif",
-                  boxShadow: "0 4px 16px rgba(83,153,239,0.4)",
-                }}
               >
-                B
+                <img src={logo} alt="Logo BEM PNJ" />
               </div>
               <div>
                 <div

@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-// ── DATA STRUKTUR (Tanpa Nama) ─────────────────────────────
 const STRUKTUR = {
   ketua: { jabatan: "KETUA UMUM" },
   wakil: { jabatan: "WAKIL KETUA UMUM" },
@@ -48,7 +47,6 @@ const STRUKTUR = {
   ],
 };
 
-// ── BOX STYLES ─────────────────────────────────────────────────
 const BOX = {
   ketua: {
     bg: "linear-gradient(135deg, #1e3a8a 0%, #01002A 100%)",
@@ -115,10 +113,9 @@ const BOX = {
   },
 };
 
-const LINE_COLOR = "#3b82f6"; // Biru cerah (Blue-500) agar terlihat menyala
-const LINE_WIDTH = 3; // Ketebalan garis
+const LINE_COLOR = "#3b82f6";
+const LINE_WIDTH = 3;
 
-// ── KOMPONEN PENDUKUNG ─────────────────────────────────────────
 function Box({ type = "ketua", jabatan, delay = 0, isMobile = false }) {
   const s = BOX[type];
   return (
@@ -137,7 +134,7 @@ function Box({ type = "ketua", jabatan, delay = 0, isMobile = false }) {
         textAlign: "center",
         position: "relative",
         zIndex: 10,
-        border: "1px solid rgba(255,255,255,0.1)", // Efek glossy tipis
+        border: "1px solid rgba(255,255,255,0.1)",
       }}
     >
       <div
@@ -155,32 +152,53 @@ function Box({ type = "ketua", jabatan, delay = 0, isMobile = false }) {
   );
 }
 
-// ── DESKTOP LAYOUT COMPONENTS ──────────────────────────────────
-const SpineRow = ({ left, right, dashed = false }) => (
+const SpineRow = ({ left, right, dashed = false, doubleLine = false }) => (
   <div className="flex w-full justify-center">
-    {/* Kiri */}
     <div
       className="w-1/2 flex items-center justify-end pr-11 ml-[2px] relative "
       style={{ borderRight: `${LINE_WIDTH}px solid ${LINE_COLOR}` }}
     >
       {left && left}
     </div>
-    {/* Kanan */}
+
     <div className="w-1/2 flex items-center justify-start pl-8 relative">
       {right && (
         <>
-          {/* Garis Horizontal Sambungan dengan Radius Melengkung */}
-          <div
-            className="absolute left-[-2.5px] top-1/4 w-8"
-            style={{
-              height: "50%",
-              borderTop: dashed
-                ? `${LINE_WIDTH}px dashed ${LINE_COLOR}`
-                : `${LINE_WIDTH}px solid ${LINE_COLOR}`,
-              borderLeft: `${LINE_WIDTH}px solid ${LINE_COLOR}`,
-              borderTopLeftRadius: 16, // Memperhalus sudut
-            }}
-          />
+          {doubleLine ? (
+            <>
+              <div
+                className="absolute left-[-2.5px] top-1/2 w-8 -translate-y-[60%]"
+                style={{
+                  height: "50%",
+                  borderTop: `${LINE_WIDTH}px solid ${LINE_COLOR}`,
+                  borderLeft: `${LINE_WIDTH}px solid ${LINE_COLOR}`,
+                  borderTopLeftRadius: 16,
+                  zIndex: 2,
+                }}
+              />
+              <div
+                className="absolute left-[-2.5px] top-1/2 w-8 -translate-y-[40%]"
+                style={{
+                  height: "50%",
+                  marginTop: `${LINE_WIDTH + 1}px`,
+                  borderTop: `${LINE_WIDTH}px dashed ${LINE_COLOR}`,
+                  zIndex: 1,
+                }}
+              />
+            </>
+          ) : (
+            <div
+              className="absolute left-[-2.5px] top-1/4 w-8"
+              style={{
+                height: "50%",
+                borderTop: dashed
+                  ? `${LINE_WIDTH}px dashed ${LINE_COLOR}`
+                  : `${LINE_WIDTH}px solid ${LINE_COLOR}`,
+                borderLeft: `${LINE_WIDTH}px solid ${LINE_COLOR}`,
+                borderTopLeftRadius: dashed ? 0 : 16,
+              }}
+            />
+          )}
           {right}
         </>
       )}
@@ -191,7 +209,6 @@ const SpineRow = ({ left, right, dashed = false }) => (
 const BpiWithDivisi = () => (
   <div className="flex flex-col my-10 relative w-full">
     <Box type="bpi" jabatan={STRUKTUR.bpi.jabatan} delay={0.15} />
-    {/* Garis lengkung ke Divisi */}
     <div
       className="absolute top-[40px] left-[234px] bottom-[24px] w-6 "
       style={{
@@ -260,10 +277,7 @@ const BidangWithDepartemen = ({ data, index }) => (
 
 export default function OrgStructure() {
   return (
-    <section
-      id="struktur"
-      className="py-24 relative bg-slate-50 overflow-hidden"
-    >
+    <section id="struktur" className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-5 md:px-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -336,12 +350,25 @@ export default function OrgStructure() {
                 />
               </div>
 
-              {/* Level 3: BPI & Divisi */}
               <div className="relative">
-                <div
-                  className="absolute -left-5 top-6 w-5"
-                  style={{ borderTop: `${LINE_WIDTH}px dashed ${LINE_COLOR}` }}
-                />
+                <div className="absolute -left-5 top-6 w-5 h-[14px]">
+                  <div
+                    className="absolute top-[-10px] left-0 right-0" 
+                    style={{
+                      borderTop: `${LINE_WIDTH}px solid ${LINE_COLOR}`,
+                      zIndex: 2,
+                    }}
+                  />
+                  <div
+                    className="absolute left-0 right-0"
+                    style={{
+                      top: `${LINE_WIDTH + 3}px`, 
+                      borderTop: `${LINE_WIDTH}px dashed ${LINE_COLOR}`,
+                      zIndex: 1,
+                    }}
+                  />
+                </div>
+
                 <Box
                   type="bpi"
                   jabatan={STRUKTUR.bpi.jabatan}
@@ -349,6 +376,7 @@ export default function OrgStructure() {
                   isMobile
                 />
 
+                {/* Koneksi ke Divisi di bawahnya */}
                 <div
                   className="ml-5 pl-5 mt-4 flex flex-col gap-3"
                   style={{ borderLeft: `${LINE_WIDTH}px solid ${LINE_COLOR}` }}
@@ -452,7 +480,7 @@ export default function OrgStructure() {
             />
 
             {/* ROW 3: Badan Pengembangan Internal */}
-            <SpineRow dashed right={<BpiWithDivisi />} />
+            <SpineRow doubleLine right={<BpiWithDivisi />} />
 
             {/* ROW 4: Biro Bendahara & Biro Sekretaris (Split T-Junction) */}
             <div className="flex w-full justify-center">
